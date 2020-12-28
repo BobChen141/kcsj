@@ -1,0 +1,118 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>管理员页面的头部</title>
+		<link rel="stylesheet" type="text/css" href="../../Resours/css/Main.css"/>
+		<link rel="stylesheet" type="text/css" href="../../Resours/css/bootstrap.min.css">
+	</head>
+	<body onload=" fun()">
+		<div id="head">
+			<div id="head_top">
+				<span id="name"></span>
+				<a href="../User/Login.html" target="_blank" id="login" class="btn btn-success btn-sm " >请登录</a>
+				<a href="../User/Register.html" target="_blank" class="btn btn-success btn-sm " id="reg">请注册</a>
+				<a  target="_blank" id="exit" onclick="exit()" class="btn btn-danger btn-sm ">退出登录</a>
+				<span id="visited"></span>
+
+			</div>
+			<div id="head_bottom">
+				<!-- 商标 -->
+				<img id="logo" src="../../Resours/images/Main/logo.png" >
+				<div id="nav">
+					<button class="btn btn-success" disabled="disabled">信息分类 </button>
+					<a href="UserList.html" target="center" class="btn btn-success btn-sm " id="m_u"> 用户信息</a>
+					<a href="GoodsList.html" target="center" class="btn btn-success btn-sm " id="m_g"> 商品信息 </a>
+					<a href="OrderList.html" target="center" class="btn btn-success btn-sm " id="m_o"> 订单信息 </a>
+				</div>
+			</div>
+		</div>
+		
+		<script src="../../Resours/js/jquery-3.3.1.min.js"></script>
+		<script>
+        //在页面加载完成后
+       
+       function fun() {
+               //发送ajax请求
+               $.get("/Shopx/MServlet?action=checklogin",function (data) {
+	               		//获得id为name的span
+	               		var span = $("#name");
+	               		
+	               		//获得id为exit的a
+	               		var exit = 	$("#exit");
+	               		//获得id为login的a
+	               		var login = 	$("#login");
+
+	               		
+	               		//获得注册按钮
+	               		var reg = $("#reg");
+
+	               		//获得三个按钮
+				  		 var m_u = $("#m_u");
+				  		 var m_g = $("#m_g");
+				  		 var m_o = $("#m_o");
+
+	                   //判断session里的用户名是否存在
+	                   if(data != "0"){
+	                	 //如果存在就在span上显示用户名
+		                   	span.html("用户名："+data);
+		                   	//隐藏登陆标签
+		                   //隐藏：
+		                   	login.hide();
+							//显示退出按钮：
+							exit.show();
+
+							//隐藏注册按钮
+		                   	reg.hide();
+						   //显示三个按钮
+						    m_u.show();
+						    m_g.show();
+						    m_o.show();
+					   }else{
+                	 //如果不存在,移除用户名
+	                   	span.html(""); 
+
+	                   	//	隐藏exit标签：
+	                   exit.hide();
+	                   	//显示登陆标签：
+						login.show();
+						//显示注册按钮
+						   reg.show();
+						   //隐藏三个按钮
+						   m_u.hide();
+						   m_g.hide();
+						   m_o.hide();
+                   }
+               });
+        }
+        //window.setInterval("fun()",1);
+        function exit(){
+        	if(confirm('确定要退出吗?')){
+        		 $.get("/Shopx/MServlet?action=exit",function (data) {
+        			 fun();
+					 window.close();//关闭当前页面
+					 //退回到首页
+					 window.open("../Main/Main.html");
+        		 },'json');
+
+			}else{
+			}
+        }
+		function listenerv(){
+			//显示访问人数
+			//使用ajax请求，进行在线人数的显示
+			$.get("/Shopx/MServlet?action=visited",function (data) {
+				var spanv = $("#visited");
+				spanv.html("当前网站访问量："+data+"人");
+			},'json');
+		}
+
+       listenerv();
+    
+	</script>
+	<script src="../../Resours/js/popper.min.js"></script>
+	<script src="../../Resours/js/bootstrap.min.js"></script>
+	</body>
+</html>
+

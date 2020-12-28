@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>用户管理页面</title>
+    <link rel="stylesheet" type="text/css" href="../../../Resours/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../../../Resours/css/User.css">
+</head>
+<body>
+<div id="head">
+
+</div>
+<div id="center">
+    <table class="table table-bordered table-hover">
+        <tbody>
+
+        </tbody>
+    </table>
+    <button class="btn btn-primary btn-sm" onclick="update()">确认修改</button>
+</div>
+<script src="../../../Resours/js/jquery-3.3.1.min.js"></script>
+<script>
+
+    var name ;
+    function fun1() {
+        //获得从UserList.html传过来的name值
+        var url = 'name';
+        var reg = new RegExp("(^|&)" + url + "=([^&]*)(&|$)", "i");
+        var r = window.location.search.substr(1).match(reg);
+         name = decodeURIComponent(r[2]);
+
+        console.log("name" + name);//成功打印name,有值
+        var bodys = '';
+        //发送ajax请求
+        //进行ajax交互
+        $.ajax({
+            method: 'post',
+            data: {'name': name},
+            url: '/Shopx/MServlet?action=user',
+            success: function (data) {
+                bodys += `
+        		   <tr>
+                        <td>用户名</td>
+                        <td>
+                            <input type="text" value="${data.u_name}" name="name" id="name"/>
+                        </td>
+	              	</tr>
+	              	<tr>
+                        <td>用户密码</td>
+                        <td>
+                            <input type="text" value="${data.u_pwd}" name="pwd" id="pwd"/>
+                        </td>
+	              	</tr>
+	              	<tr>
+	              		<td>电话号码</td>
+	              		<td>
+	              		<input type="text" value="${data.u_phone}" name="phone" id="phone"/>
+	              		</td>
+	              	</tr>
+	              	<tr>
+	              		<td>地址</td>
+	              		<td>
+	              		<input type="text" value="${data.u_address}" name="addr" id="addr"/>
+	              		</td>
+	              	</tr>
+	              	<tr>
+	              		<td>角色，1是管理员，0是普通用户</td>
+	              		<td>
+	              		<input type="text" value="${data.u_role}" name="role" id="role"/>
+	              		</td>
+	              	</tr>
+	              	<tr>
+	              		<td>余额</td>
+	              		<td>
+	              		<input type="text" value="${data.u_money}" name="money" id="money"/>
+	              		</td>
+	              	</tr>
+        	   `
+                $("tbody").html(bodys);
+            },
+            dataType: 'json'
+        });
+    }
+
+    fun1();
+
+    function update() {
+        //<form action="/Shopx/UserServlet?action=updateUser" method="post">
+        var username = $("#name").val();
+        var pwd = $("#pwd").val();
+        var phone = $("#phone").val();
+        var addr = $("#addr").val();
+        var role = $("#role").val();
+        var money = $("#money").val();
+
+
+        if (username === "" && addr === "" && phone === "" && pwd === "" && role === "" && money === "") {
+            alert('请输入信息');
+        } else if (username === "") {
+            alert('请输入用户名');
+        } else if (phone === "") {
+            alert('请输入电话号码');
+        } else if (addr === "") {
+            alert('请输入地址');
+        } else if (pwd === "") {
+            alert('请输入密码');
+        } else if (role === "") {
+            alert('请输入角色');
+        } else if (money === "") {
+            alert('请输入余额');
+        } else {
+            //进行ajax交互
+            $.ajax({
+                method: 'get',
+                data: {'username': username, 'addr': addr, "phone": phone, "pwd": pwd, "role": role, "money": money,"oldname":name},
+                url: '/Shopx/MServlet?action=updateUser',
+                success: function (data) {
+                    if (data > 0) {
+                        alert('修改成功');
+                        window.close();
+                        history.back();
+                    } else if (data === 0) {
+                        alert('修改失败，电话号码或者用户名已存在');
+                    }
+                },
+                dataType: 'json'
+            });
+        }
+
+    }
+
+</script>
+</body>
+</html>

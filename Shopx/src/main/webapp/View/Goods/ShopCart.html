@@ -1,0 +1,170 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>购物车</title>
+<link rel="stylesheet" type="text/css"
+	href="../../Resours/css/Shopcart.css" />
+	<link rel="stylesheet" type="text/css" href="../../Resours/css/bootstrap.min.css">
+</head>
+<body >
+	<div id="center">
+	
+	
+			<img src="../../Resours/images/Main/logo.png" id="logo"> 
+			<span id="title"> 购物车 </span>
+			<div id="center_bottom">
+			<!--  -->
+			<form action="/Shopx/GoodsServlet?action=counts" method="post">
+				<table id="table" class="table table-bordered table-hover" >
+				<tbody id="ck_tb">
+				
+				</tbody>
+				</table>
+				<input type="checkbox" id="ck_All" />全选
+			</form>
+			<button type="button" id="sum_btn" class="btn btn-success btn-sm ">结算</button>
+			<a href="../Goods/Order.html" target="center" class="btn btn-success btn-sm ">查看历史订单</a>
+			</div>
+		</div>
+		<script type="text/javascript"
+			src="../../Resours/js/jquery-3.3.1.min.js"></script>
+		<script>
+		//及时更新
+		function fun1() {
+	               //发送ajax请求get类型
+	               $.get("/Shopx/GoodsServlet?action=showsc",function (data) {
+	               	  
+	               	  var bodys='';
+	               		 $.each(data,function(i,v){
+	               		 	bodys+=`<tbody >
+	               		 		<tr >
+	               		 			<td >
+	               		 			<input type="checkbox" value="${v.g_id}" name="ckbox" onclick="aa()"/>
+	               		 			<span style="visibility: hidden">${v.g_id}</span>
+	               		 			</td>
+									<td >
+										<img id="logo" src="../../Resours/images/Goods/${v.g_category }/${v.g_picture}">
+									</td>
+									<td >${v.g_describe }</td>
+									<td >
+										<img src="../../Resours/images/Goods/ShopCart/minus.png" class="img_count" onclick="min(this)">
+										<span id="count">${v.count}</span>
+										<img src="../../Resours/images/Goods/ShopCart/add.png" class="img_count" onclick="add(this)">
+									</td>
+									<td >${v.g_price }元</td>
+									<td >
+											<a href="/Shopx/GoodsServlet?action=deleteSc&gid=${v.g_id}" class="btn btn-danger btn-sm " conclick="delete()">删除</a>
+									</td>
+	               		 		</tr>	               		 	
+	               		 	</tbody>
+	               		 	`
+	               		 });
+	               		 
+	               		$('tbody').html(bodys); 
+	               		 
+	               },'json');
+	     }
+		//当点击减少图片，及时更新购买数量
+		function min(m) {
+				//需要获得商品id,当前购买数量，按钮为减少minus,作为参数传入
+				//获得购买数量
+				var count = $(m).next().text(); // 下一个兄弟节点
+				console.log("商品数量"+count);
+				
+				//得到商品id
+				var gid = $(m).parent().prev().prev().prev().children("span:last-child").text(); 
+				console.log("商品id"+gid);
+				
+				//设置按钮为minus
+				var btnname = "minus";
+				
+				 /*发送ajax请求*/
+	            $.ajax({
+					method:'get',
+					data:{'c': count,'g':gid,'bn':btnname},
+					url:'/Shopx/GoodsServlet?action=changCounts',
+					success:function(data){
+						if(data==='修改成功'){
+							fun1();
+						}
+						
+					},
+					dataType:'json'
+	            });
+	        	
+			}
+		//当点击增加图片，及时更新购买数量
+		function add(a) {
+				//需要获得商品id,当前购买数量，按钮为添加add,作为参数传入
+				//获得购买数量
+				var count = $(a).prev().text(); // 下一个兄弟节点
+				console.log("商品数量"+count);
+				
+				//得到商品id
+				var gid = $(a).parent().prev().prev().prev().children("span:last-child").text(); 
+				console.log("商品id"+gid);
+				
+				//设置按钮为add
+				var btnname = "add";
+				
+	            /*发送ajax请求*/
+	            $.ajax({
+					method:'get',
+					data:{'c': count,'g':gid,'bn':btnname},
+					url:'/Shopx/GoodsServlet?action=changCounts',
+					success:function(data){
+						if(data==='修改成功'){
+							fun1();
+						}
+					},
+					dataType:'json'
+	            });
+			}
+				$(function(){
+					//判断子选项跟随全选
+						$("#ck_All").click(function(){
+							$("#ck_tb input").prop("checked",$(this).prop("checked"))
+							
+							var length = $("#ck_tb input").length;//找到所有checkbox标签的个数
+							var checkedLength = $("#ck_tb input:checked").length;
+							//console.log("length:"+length);
+							//console.log("checkedLength:"+checkedLength);
+						});
+						
+						
+						
+				});
+				//实现子选项全选后主选项被选中
+				function aa(){
+					var length = $("#ck_tb input").length;//找到所有checkbox标签的个数
+					var checkedLength = $("#ck_tb input:checked").length;
+					console.log("length:"+length);
+					console.log("checkedLength:"+checkedLength);
+					if(length == checkedLength){
+						$("#ck_All").prop("checked",true);
+					}else{
+						$("#ck_All").prop("checked",false);
+					}
+				}
+				//判断是否所选项为空
+				function submit(){
+					$("#sum_btn").click(function(){
+						
+						var length = $("#ck_tb input").length;//找到所有checkbox标签的个数
+						var checkedLength = $("#ck_tb input:checked").length;
+						console.log("length:"+length);
+						console.log("checkedLength:"+checkedLength);
+						if(checkedLength==0){
+							alert('请选择您的商品');
+						}else{
+							$("form").submit();
+						}
+					});
+				}
+				submit();
+				fun1();
+			</script>
+</body>
+</html>

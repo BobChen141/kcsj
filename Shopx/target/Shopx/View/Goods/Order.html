@@ -1,0 +1,55 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>订单</title>
+		<link rel="stylesheet" type="text/css" href="../../Resours/css/Order.css"/>
+		<link rel="stylesheet" type="text/css" href="../../Resours/css/bootstrap.min.css">
+	</head>
+	<body>
+		<div id="center">
+			<table id="table" class="table table-bordered table-hover" >
+				<thead>
+					<tr>
+						<th>时间</th>
+						<th>商品名，描述</th>
+						<th>数量</th>
+						<th>该类商品合计</th>
+					</tr>
+				</thead>
+				<tbody>
+				
+				</tbody>
+			</table>
+		</div>
+	</body>
+	<script type="text/javascript"
+			src="../../Resours/js/jquery-3.3.1.min.js"></script>
+		<script>
+		//及时更新
+		function fun() {
+	               //发送ajax请求get类型
+	               $.get("/Shopx/UserServlet?action=showOrder",function (data) {
+	               	  var tr='';
+	               	  console.log('data:',data)
+	               		 $.each(data,function(i,v){
+	               			 tr+=`
+	               			 	<tr>
+	               			 		<td>${v.otime}</td>
+	               			 		<td>${v.gname}</td>
+	               			 		<td>${v.counts}份</td>
+	               			 		<td>${v.money}元</td>
+	               			 	</tr>	               			 
+	               			 `
+	               		 
+	               		 });
+	               		 
+	               		$('tbody').html(tr); 
+	               		 
+	               },'json');
+	     }
+		// window.setInterval("fun()",1);
+		fun();
+		</script>
+</html>
