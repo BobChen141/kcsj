@@ -1,0 +1,116 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>商品管理页面</title>
+<link rel="stylesheet" type="text/css" href="../../../Resours/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="../../../Resours/css/User.css">
+</head>
+<body>
+<div id="head">
+	
+</div>
+<div id="center">
+<table class="table table-bordered table-hover" >
+	<tbody>
+	
+	</tbody>
+</table>
+	<button  class="btn btn-primary btn-sm" onclick="update()">修改</button>
+</div>
+<script src="../../../Resours/js/jquery-3.3.1.min.js"></script>
+<script >
+function fun1() {
+	var gid ;
+	//获得从UserList.html传过来的name值
+	var url = 'gid';
+	var reg = new RegExp("(^|&)" + url + "=([^&]*)(&|$)", "i");
+	var r = window.location.search.substr(1).match(reg);
+	gid = decodeURIComponent(r[2]);
+
+	console.log("gid" + gid);//
+	 var bodys='';
+           //发送ajax请求
+	$.ajax({
+		method: 'post',
+		data: {'gid': gid},
+		url: '/Shopx/MServlet?action=goods',
+		success: function (data) {
+			bodys += `
+					<tr>
+                        <td>商品id</td>
+                        <td>
+                            <span >${data.g_id}</span>
+                            <input type="hidden" value="${data.g_id}" name="gid" id="gid"/>
+                        </td>
+	              	</tr>
+        		   <tr>
+                        <td>商品名</td>
+                        <td>
+                            <input type="text" value="${data.g_describe}" name="name" id="name"/>
+                        </td>
+	              	</tr>
+	              	<tr>
+                        <td>价格</td>
+                        <td>
+                            <input type="text" value="${data.g_price}" name="price" id="price"/>
+                        </td>
+	              	</tr>
+	              	<tr>
+	              		<td>图片名</td>
+	              		<td>
+	              		<span>${data.g_picture}</span>
+	              		</td>
+	              	</tr>
+	              	<tr>
+	              		<td>商品类别,商品类别代表在服务器的文件夹名</td>
+	              		<td>
+	              		<span>${data.g_category}</span>
+	              		</td>
+	              	</tr>
+        	   `
+			$("tbody").html(bodys);
+		},
+		dataType: 'json'
+	});
+    }
+fun1();
+function update(){
+	//<form action="/Shopx/UserServlet?action=updateUser" method="post">
+	var gid = $("#gid").val();
+	var name = $("#name").val();
+	var price = $("#price").val();
+	console.log("gid"+gid);
+	console.log("name"+name);
+	console.log("price"+price);
+	if(name==="" && price==="" ){
+		alert('请输入值');
+	}else if(name===""){
+		alert('请输入商品描述');
+	}else if(price===""){
+		alert('请输入价格');
+	}else{
+		//进行ajax交互
+		 $.ajax({
+				method:'post',
+				data:{'gid':gid,'name':name,"price":price},
+				url:'/Shopx/MServlet?action=updateGoods',
+				success:function(data){
+					if(data>0){
+						alert('修改成功');
+						window.close();
+						history.back();
+					}else if(data===0){
+						alert('修改失败');
+					}
+				},
+				dataType:'json'
+            });
+	}
+	
+}
+
+</script>
+</body>
+</html>

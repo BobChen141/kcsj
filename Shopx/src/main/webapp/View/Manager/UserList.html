@@ -1,0 +1,91 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>展示用户信息</title>
+		<link rel="stylesheet" type="text/css" href="../../Resours/css/M_List.css"/>
+		<link rel="stylesheet" type="text/css" href="../../Resours/css/bootstrap.min.css">
+	</head>
+	<body>
+		<div id="center">
+			<table id="table" class="table table-bordered table-hover" >
+				<thead>
+				<tr>
+					<a onclick="tableToExcel()"  class="btn btn-success btn-sm " >导出数据</a>
+				</tr>
+					<tr>
+						<th>用户名</th>
+						<th>用户密码</th>
+						<th>电话号码</th>
+						<th>地址</th>
+						<th>余额</th>
+						<th>角色</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+
+				</tbody>
+			</table>
+		</div>
+	</body>
+	<script type="text/javascript"
+			src="../../Resours/js/jquery-3.3.1.min.js"></script>
+		<script>
+			var jsonData=null;
+			const tableToExcel = () => {
+
+				// 列标题，逗号隔开，每一个逗号就是隔开一个单元格
+				let str = `用户名,电话号码,用户密码,地址,余额,角色\n`;
+				// 增加\t为了不让表格显示科学计数法或者其他格式
+				for(let i = 0 ; i < jsonData.length ; i++ ){
+					for(const key in jsonData[i]){
+						str+=`${jsonData[i][key] + '\t'},`;
+					}
+					str+='\n';
+				}
+				// encodeURIComponent解决中文乱码
+				const uri = 'data:text/csv;charset=utf-8,\ufeff' + encodeURIComponent(str);
+				// 通过创建a标签实现
+				const link = document.createElement("a");
+				link.href = uri;
+				// 对下载的文件命名
+				link.download =  "用户信息数据表.csv";
+				link.click();
+			}
+
+
+			//及时更新
+		function fun() {
+	               //发送ajax请求get类型
+	               $.get("/Shopx/UserServlet?action=userlist",function (data) {
+	               	jsonData = data;
+	               	  var tr='';
+	               	  console.log('data:',data)
+
+	               		 $.each(data,function(i,v){
+	               			 tr+=`
+	               			 	<tr>
+	               			 		<td>${v.u_name}</td>
+	               			 		<td>${v.u_pwd}</td>
+	               			 		<td>${v.u_phone}</td>
+	               			 		<td>${v.u_address}</td>
+	               			 		<td>${v.u_money}</td>
+	               			 		<td>${v.u_role}</td>
+	               			 		<td>
+	               			 		<a href="/Shopx/MServlet?action=delUser&u_name=${v.u_name}" class="btn btn-danger btn-sm " >删除</a>
+	               			 		<a href="M/M_UserList.html?name=${v.u_name}" class="btn btn-danger btn-sm " >修改</a>
+	               			 		</td>
+	               			 		</tr>
+	               			 `
+	               		 
+	               		 });
+	               		 
+	               		$('tbody').html(tr); 
+	               		 
+	               },'json');
+	     }
+		fun();
+		</script>
+</html>

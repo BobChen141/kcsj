@@ -1,0 +1,84 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>展示商品信息</title>
+		<link rel="stylesheet" type="text/css" href="../../Resours/css/M_List.css"/>
+		<link rel="stylesheet" type="text/css" href="../../Resours/css/bootstrap.min.css">
+	</head>
+	<body>
+		<div id="center">
+			<table id="table" class="table table-bordered table-hover" >
+				<thead>
+				<tr>
+					<a onclick="tableToExcel()"  class="btn btn-success btn-sm " >导出数据</a>
+				</tr>
+					<tr>
+						<th>商品价格</th>
+						<th>商品照片文件名</th>
+						<th>描述</th>
+						<th>商品类id</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+				
+				</tbody>
+			</table>
+		</div>
+	</body>
+	<script type="text/javascript"
+			src="../../Resours/js/jquery-3.3.1.min.js"></script>
+		<script>
+			var jsonData=null;
+			const tableToExcel = () => {
+
+				// 列标题，逗号隔开，每一个逗号就是隔开一个单元格
+				let str = `商品id,价格,图片名,商品描述,商品类别id,无用数据\n`;
+				// 增加\t为了不让表格显示科学计数法或者其他格式
+				for(let i = 0 ; i < jsonData.length ; i++ ){
+					for(const key in jsonData[i]){
+						str+=`${jsonData[i][key] + '\t'},`;
+					}
+					str+='\n';
+				}
+				// encodeURIComponent解决中文乱码
+				const uri = 'data:text/csv;charset=utf-8,\ufeff' + encodeURIComponent(str);
+				// 通过创建a标签实现
+				const link = document.createElement("a");
+				link.href = uri;
+				// 对下载的文件命名
+				link.download =  "商品信息数据表.csv";
+				link.click();
+			}
+		//及时更新
+		function fun() {
+	               //发送ajax请求get类型
+	               $.get("/Shopx/UserServlet?action=goodslist",function (data) {
+					   jsonData = data;
+	               	  var tr='';
+	               	  console.log('data:',data)
+	               		 $.each(data,function(i,v){
+	               			 tr+=`
+	               			 	<tr>
+	               			 		<td>${v.g_price}</td>
+	               			 		<td>${v.g_picture}</td>
+	               			 		<td>${v.g_describe}</td>
+	               			 		<td>${v.g_category}</td>
+	               			 		<td>
+	               			 		<a href="M/M_GoodsList.html?gid=${v.g_id}" class="btn btn-danger btn-sm " >修改</a>
+	               			 		</td>
+	               			 	</tr>
+	               			 `
+	               		 
+	               		 });
+	               		 
+	               		$('tbody').html(tr); 
+	               		 
+	               },'json');
+	     }
+		// window.setInterval("fun()",1);
+		fun();
+		</script>
+</html>

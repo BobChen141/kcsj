@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>展示订单信息</title>
+		<link rel="stylesheet" type="text/css" href="../../Resours/css/M_List.css"/>
+		<link rel="stylesheet" type="text/css" href="../../Resours/css/bootstrap.min.css">
+	</head>
+	<body>
+		<div id="center">
+			<table id="table" class="table table-bordered table-hover" >
+				<thead>
+				<tr>
+					<a onclick="tableToExcel()"  class="btn btn-success btn-sm " >导出数据</a>
+				</tr>
+					<tr>
+						<th>oid</th>
+						<th>时间</th>
+						<th>商品名，描述</th>
+						<th>数量</th>
+						<th>该类商品合计</th>
+						<th>买家姓名</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+				
+				</tbody>
+			</table>
+		</div>
+	</body>
+	<script type="text/javascript"
+			src="../../Resours/js/jquery-3.3.1.min.js"></script>
+		<script>
+			var jsonData=null;
+			const tableToExcel = () => {
+
+				// 列标题，逗号隔开，每一个逗号就是隔开一个单元格
+				let str = `订单id,时间,x,购买数量,价格,购买用户,商品名\n`;
+				// 增加\t为了不让表格显示科学计数法或者其他格式
+				for(let i = 0 ; i < jsonData.length ; i++ ){
+					for(const key in jsonData[i]){
+						str+=`${jsonData[i][key] + '\t'},`;
+					}
+					str+='\n';
+				}
+				// encodeURIComponent解决中文乱码
+				const uri = 'data:text/csv;charset=utf-8,\ufeff' + encodeURIComponent(str);
+				// 通过创建a标签实现
+				const link = document.createElement("a");
+				link.href = uri;
+				// 对下载的文件命名
+				link.download =  "订单信息数据表.csv";
+				link.click();
+			}
+		//及时更新
+		function fun() {
+	               //发送ajax请求get类型
+	               $.get("/Shopx/UserServlet?action=orderlist",function (data) {
+					   jsonData = data;
+	               	  var tr='';
+	               	  console.log('data:',data)
+	               		 $.each(data,function(i,v){
+	               			 tr+=`
+	               			 	<tr>
+	               			 		<td>${v.oid}</td>
+	               			 		<td>${v.otime}</td>
+	               			 		<td>${v.gname}</td>
+	               			 		<td>${v.counts}份</td>
+	               			 		<td>${v.money}元</td>
+	               			 		<td>${v.u_name}</td>
+	               			 		<td>
+	               			 		<a href="/Shopx/MServlet?action=delorders&oid=${v.oid}" class="btn btn-danger btn-sm" >删除</a>
+	               			 		</td>
+	               			 	</tr>
+	               			 `
+	               		 
+	               		 });
+	               		 
+	               		$('tbody').html(tr); 
+	               		 
+	               },'json');
+	     }
+		fun();
+		</script>
+</html>

@@ -1,0 +1,84 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>登录界面</title>
+		
+		<link rel="stylesheet" type="text/css" href="../../Resours/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="../../Resours/css/Login.css"/>
+	</head>
+	<body>
+	
+			<div id="login">
+				<div id="login_center">
+				
+					<form class="form-horizontal" >
+					  <div class="form-group">
+					    <label for="username" class="col-sm-2 control-label">用户名</label>
+					    <div class="col-sm-10">
+					      <input type="text" class="form-control" name="username" id="username" placeholder="请输入用户名">
+					    </div>
+					  </div>
+					  <div class="form-group">
+					    <label for="pwd" class="col-sm-2 control-label">密码</label>
+					    <div class="col-sm-10">
+					      <input type="password" class="form-control"  placeholder="请输入密码" name="pwd" id="pwd">
+					    </div>
+					  </div>
+					  <div class="form-group">
+					    <div class="col-sm-offset-2 col-sm-10">
+					      
+					    </div>
+					  </div>
+					</form>
+				</div>
+				<div id="login_bottom">
+				<button id="submit"  class="btn btn-success btn-lg " onclick="submit()">登录</button>
+					<a href="LostPwd.html" class="btn btn-info btn-sm">忘记密码</a>
+					<a href="LostName.html" class="btn btn-info btn-sm">忘记会员名</a>
+					<a href="Register.html" class="btn btn-info btn-sm">免费注册</a>
+				</div>
+			</div>
+			
+			
+	</body>
+	<script type="text/javascript"
+			src="../../Resours/js/jquery-3.3.1.min.js"></script>
+		<script>
+		function submit(){
+				var username = $("#username").val();   
+				var pwd = $("#pwd").val(); 
+				if(pwd==="" && username===""){
+					alert('请输入信息');
+				}else if(username===""){
+					alert('请输入用户名');
+				}else if(pwd===""){
+					alert('请输入密码');
+				}else{
+					//进行ajax交互
+					 $.ajax({
+							method:'get',
+							data:{'username': username,'pwd':pwd},
+							url:'/Shopx/UserServlet?action=login',
+							success:function(data){
+								if(data===1){//普通用户
+									alert('登录成功');
+									window.close();
+									window.open("../Main/Main.html");
+								}else if(data===0){
+									alert('密码错误');
+								}else if(data===2){
+									alert('用户不存在');
+								}else{//管理员
+									alert('管理员');
+									window.close();
+									window.open("../Manager/Manager.html");
+								}
+							},
+							dataType:'json'
+			            });
+				}
+		}
+		</script>
+</html>

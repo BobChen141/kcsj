@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>注册页面</title>
+		<link rel="stylesheet" type="text/css" href="../../Resours/css/Login.css"/>
+		<link rel="stylesheet" type="text/css" href="../../Resours/css/bootstrap.min.css">
+	</head>
+	<body>
+			<div id="login">
+				<div id="login_center">
+				<form class="form-horizontal">
+							<div class="form-group">
+							    <label for="username" class="col-sm-2 control-label">用户名</label>
+							    <div class="col-sm-10">
+							      <input type="text" class="form-control" name="username" id="username" placeholder="请输入用户名">
+							    </div>
+							  </div>
+							  <div class="form-group">
+							    <label for="phone" class="col-sm-2 control-label">电话号码</label>
+							    <div class="col-sm-10">
+							      <input type="text" class="form-control"  placeholder="请输入电话号码"" name="phone" id="phone">
+							    </div>
+							  </div>
+							   <div class="form-group">
+							    <label for="addr" class="col-sm-2 control-label">地址</label>
+							    <div class="col-sm-10">
+							      <input type="text" class="form-control"  placeholder="请输入地址"" name="addr" id="addr">
+							    </div>
+							  </div>
+							  <div class="form-group">
+							    <label for="pwd1" class="col-sm-2 control-label">密码</label>
+							    <div class="col-sm-10">
+							      <input type="password" class="form-control"  placeholder="请输入密码" name="pwd" id="pwd1">
+							    </div>
+							  </div>
+							  <div class="form-group">
+							    <div class="col-sm-10">
+							      <input type="password" class="form-control"  placeholder="请再次输入密码" name="pwd" id="pwd2">
+							    </div>
+							  </div>
+							  
+							  <div class="form-group">
+							    <div class="col-sm-offset-2 col-sm-10">
+							      
+							    </div>
+							  </div>
+					</form>
+					
+					<button id="submit"  class="btn btn-success btn-lg " onclick="submit()">提交</button>
+				</div>
+			</div>
+	</body>
+	<script type="text/javascript"
+			src="../../Resours/js/jquery-3.3.1.min.js"></script>
+		<script>
+		//判断是否所选项为空
+		function submit(){
+				var username = $("#username").val();   
+				var pwd1 = $("#pwd1").val(); 
+				var pwd2 = $("#pwd2").val();
+				var phone = $("#phone").val();
+				var addr = $("#addr").val();
+				
+				if(pwd1==="" && username==="" && pwd2==="" && phone==="" && addr==="" ){
+					alert('请输入信息');
+				}else if(username===""){
+					alert('请输入用户名');
+				}else if(phone===""){
+					alert('请输入电话号码');
+				}else if(addr===""){
+					alert('请输入地址');
+				}else if(pwd1===""){
+					alert('请输入密码');
+				}else if(pwd2===""){
+					alert('请再次输入密码');
+				}else if(pwd2 != pwd1){
+					alert('两次密码不一致');
+				}else{
+					//进行ajax交互
+					 $.ajax({
+							method:'get',
+							data:{'username': username,'pwd1':pwd1,'phone':phone,'addr':addr},
+							url:'/Shopx//UserServlet?action=reg',
+							success:function(data){
+								if(data>0){
+									alert("注册成功");
+									window.close();
+									history.back();
+								}else if(data===0){
+									alert("注册失败，用户名已存在，或者电话号码已存在");
+								}
+							},
+							dataType:'json'
+			            });
+				}
+		}
+		</script>
+</html>

@@ -1,0 +1,21 @@
+*{
+	padding: 0;
+	margin: 0;
+	text-decoration: none;
+}
+#login{
+	width: 100%;
+	margin-top: 50px;
+}	
+#login_center{
+	width:50%;
+	margin: auto;
+}
+
+#login_bottom{
+	width:30%;
+	margin: auto;
+}
+#submit{
+	margin: auto;
+}
